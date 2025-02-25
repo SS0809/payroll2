@@ -1,24 +1,30 @@
 package com.employee.payroll2.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "employees")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
+    private Double salary;
 
-    @Column(nullable = false)
-    private String email;
+    public EmployeeEntity() {}
 
-    private String department;
+    public EmployeeEntity(String name, Double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public Double getSalary() { return salary; }
+    public void setSalary(Double salary) { this.salary = salary; }
 }

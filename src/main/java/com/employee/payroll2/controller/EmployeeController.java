@@ -35,8 +35,6 @@ public class EmployeeController {
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody EmployeeEntity updatedEmployee) {
         return employeeRepository.findById(id).map(existingEmployee -> {
             existingEmployee.setName(updatedEmployee.getName());
-            existingEmployee.setEmail(updatedEmployee.getEmail());
-            existingEmployee.setDepartment(updatedEmployee.getDepartment());
             return ResponseEntity.ok(employeeRepository.save(existingEmployee).toString());
         }).orElseGet(() -> ResponseEntity.badRequest().body("Employee not found"));
     }
