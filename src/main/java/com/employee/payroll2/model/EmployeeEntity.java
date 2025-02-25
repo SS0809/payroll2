@@ -14,7 +14,7 @@ public class EmployeeEntity {
 
     public EmployeeEntity() {}
 
-    public EmployeeEntity(String name, Double salary) {
+    public EmployeeEntity(Long id ,String name, Double salary) {
         this.name = name;
         this.salary = salary;
     }
