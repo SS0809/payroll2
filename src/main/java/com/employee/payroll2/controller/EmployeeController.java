@@ -2,7 +2,6 @@ package com.employee.payroll2.controller;
 
 import com.employee.payroll2.dto.EmployeeDTO;
 import com.employee.payroll2.model.EmployeeEntity;
-import com.employee.payroll2.repository.EmployeeRepository;
 import com.employee.payroll2.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +19,38 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<List<EmployeeEntity>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        List<EmployeeDTO> employeeDTOS = employeeService.getAllEmployees();
+        if (employeeDTOS!=null) {
+            return ResponseEntity.ok(employeeDTOS);
+        }else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @GetMapping("/{id}")
-    public Optional<ResponseEntity<EmployeeEntity>> getEmployeeById(@PathVariable Long id) {
-        Optional<EmployeeEntity> employee = employeeService.getEmployeeById(id);
-        return employee.map(ResponseEntity::ok);
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
+        EmployeeDTO employee = employeeService.getEmployeeById(id);
+        if (employee!=null){
+            return ResponseEntity.ok(employee);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
     @PostMapping
-    public ResponseEntity<EmployeeEntity> createEmployee(@RequestBody EmployeeDTO employee) {
-        return ResponseEntity.ok(employeeService.addEmployee(employee));
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employee) {
+        EmployeeDTO employeeDTO = employeeService.addEmployee(employee);
+        if(employeeDTO!=null) {
+            return ResponseEntity.ok(employeeDTO);
+        }else {
+            return ResponseEntity.internalServerError().build();
+        }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee) {
-        return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee) {
+        EmployeeDTO employeeDTO = employeeService.updateEmployee(id,updatedEmployee);
+        if(employeeDTO!=null) return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
+        else return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
