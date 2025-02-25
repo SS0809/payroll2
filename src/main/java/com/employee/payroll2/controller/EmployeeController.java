@@ -1,51 +1,52 @@
 package com.employee.payroll2.controller;
 
+import com.employee.payroll2.model.EmployeeEntity;
+import com.employee.payroll2.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employees")
 @CrossOrigin(origins = "*")
 public class EmployeeController {
-    private final List<String> employees = new ArrayList<>();
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @GetMapping
-    public ResponseEntity<List<String>> getAll() {
-        return ResponseEntity.ok(employees);
+    public ResponseEntity<List<EmployeeEntity>> getAllEmployees() {
+        return ResponseEntity.ok(employeeRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getEmployee(@PathVariable int id) {
-        if (id >= 0 && id < employees.size()) {
-            return ResponseEntity.ok(employees.get(id));
-        }
-        return ResponseEntity.badRequest().body("Invalid ID");
+    public Optional<ResponseEntity<EmployeeEntity>> getEmployeeById(@PathVariable Long id) {
+        Optional<EmployeeEntity> employee = employeeRepository.findById(id);
+        return employee.map(ResponseEntity::ok);
     }
-
     @PostMapping
-    public ResponseEntity<String> addEmployee(@RequestBody String employee) {
-        employees.add(employee);
-        return ResponseEntity.ok("Employee added: " + employee);
+    public ResponseEntity<EmployeeEntity> createEmployee(@RequestBody EmployeeEntity employee) {
+        return ResponseEntity.ok(employeeRepository.save(employee));
     }
-
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable int id, @RequestBody String updatedEmployee) {
-        if (id >= 0 && id < employees.size()) {
-            employees.set(id, updatedEmployee);
-            return ResponseEntity.ok("Employee updated: " + updatedEmployee);
-        }
-        return ResponseEntity.badRequest().body("Invalid ID");
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody EmployeeEntity updatedEmployee) {
+        return employeeRepository.findById(id).map(existingEmployee -> {
+            existingEmployee.setName(updatedEmployee.getName());
+            existingEmployee.setEmail(updatedEmployee.getEmail());
+            existingEmployee.setDepartment(updatedEmployee.getDepartment());
+            return ResponseEntity.ok(employeeRepository.save(existingEmployee).toString());
+        }).orElseGet(() -> ResponseEntity.badRequest().body("Employee not found"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable int id) {
-        if (id >= 0 && id < employees.size()) {
-            String removedEmployee = employees.remove(id);
-            return ResponseEntity.ok("Deleted employee: " + removedEmployee);
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+            return ResponseEntity.ok("Employee deleted successfully");
         }
-        return ResponseEntity.badRequest().body("Invalid ID");
+        return ResponseEntity.badRequest().body("Employee not found");
     }
 }
