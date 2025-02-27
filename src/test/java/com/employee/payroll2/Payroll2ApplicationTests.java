@@ -8,6 +8,7 @@ class Payroll2ApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// This test ensures that the Spring application context loads successfully.
+		// If any configuration issues exist, this test will fail.
 	}
-
 }

@@ -1,7 +1,6 @@
 package com.employee.payroll2.controller;
 
-import com.employee.payroll2.dto.EmployeeDTO;
-import com.employee.payroll2.model.EmployeeEntity;
+import com.employee.payroll2.dto.EmployeeResponseDTO;
 import com.employee.payroll2.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employees")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "localhost/*")
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-        List<EmployeeDTO> employeeDTOS = employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() {
+        List<EmployeeResponseDTO> employeeDTOS = employeeService.getAllEmployees();
         if (employeeDTOS!=null) {
             return ResponseEntity.ok(employeeDTOS);
         }else {
@@ -33,27 +34,27 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
-        EmployeeDTO employee = employeeService.getEmployeeById(id);
-        if (employee!=null){
+    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable Long id) {
+        EmployeeResponseDTO employee = employeeService.getEmployeeById(id);
+        if (employee.getName()!=null){
             return ResponseEntity.ok(employee);
         }else {
             return ResponseEntity.notFound().build();
         }
     }
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody EmployeeDTO employee) {
-        EmployeeDTO employeeDTO = employeeService.addEmployee(employee);
-        if(employeeDTO!=null) {
+    public ResponseEntity<EmployeeResponseDTO> createEmployee(@Valid @RequestBody EmployeeResponseDTO employee) {
+        EmployeeResponseDTO employeeDTO = (EmployeeResponseDTO) employeeService.addEmployee(employee);
+        if(employeeDTO.getName()!=null) {
             return ResponseEntity.ok(employeeDTO);
         }else {
             return ResponseEntity.internalServerError().build();
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeDTO updatedEmployee) {
-        EmployeeDTO employeeDTO = employeeService.updateEmployee(id,updatedEmployee);
-        if(employeeDTO!=null) return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
+    public ResponseEntity<Object> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeResponseDTO updatedEmployee) {
+        EmployeeResponseDTO employeeDTO = employeeService.updateEmployee(id,updatedEmployee);
+        if(employeeDTO.getName()!=null) return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
         Map<String, String> errors = new HashMap<>();
         errors.put("error","ID not FOUND");
         return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);

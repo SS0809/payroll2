@@ -1,17 +1,13 @@
 package com.employee.payroll2.service;
 
-import com.employee.payroll2.dto.EmployeeDTO;
+import com.employee.payroll2.dto.EmployeeResponseDTO;
 import com.employee.payroll2.model.EmployeeEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,50 +17,51 @@ public class EmployeeService {
     private final AtomicLong idCounter = new AtomicLong(1);
     private ModelMapper modelMapper =new ModelMapper();
 
-    public List<EmployeeDTO> getAllEmployees() {
+    public List<EmployeeResponseDTO> getAllEmployees() {
         if (!employeeList.isEmpty()) {
             log.info("GET ALL EMPLOYEES");
             return employeeList.stream()
-                    .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
-                    .collect(Collectors.toList());
+                    .map(employee -> modelMapper.map(employee, EmployeeResponseDTO.class))
+                    .toList();
         } else {
             log.warn("NO EMPLOYEES FOUND");
-            return null;
+            return new LinkedList<>();
         }
     }
 
 
-    public EmployeeDTO getEmployeeById(Long id) {
+    public EmployeeResponseDTO getEmployeeById(Long id) {
         log.info("GET EMPLOYEE BY ID");
         Optional<EmployeeEntity> employeeEntity = employeeList.stream().filter(emp -> emp.getId().equals(id)).findFirst();
         if (employeeEntity.isPresent()) {
-            return modelMapper.map(employeeEntity, EmployeeDTO.class);
+            return modelMapper.map(employeeEntity, EmployeeResponseDTO.class);
         }else {
-            return null;
+            return new EmployeeResponseDTO();
         }
     }
 
-    public EmployeeDTO addEmployee(EmployeeDTO employeeDTO) {
-        EmployeeEntity newEmployee = new EmployeeEntity(idCounter.getAndIncrement(), employeeDTO.getName(), employeeDTO.getSalary());
+    public EmployeeResponseDTO addEmployee(EmployeeResponseDTO employeeDTO) {
+        employeeDTO.setId(idCounter.getAndIncrement());
+        EmployeeEntity newEmployee = modelMapper.map(employeeDTO,EmployeeEntity.class);
         if(employeeList.add(newEmployee)) {
             log.info("ADDED EMPLOYEE");
-            return modelMapper.map(newEmployee, EmployeeDTO.class);
+            return modelMapper.map(newEmployee, EmployeeResponseDTO.class);
         }else {
             log.warn("EMPLOYEE NOT ADDED");
-            return null;
+            return new EmployeeResponseDTO();
         }
     }
 
-    public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
-        EmployeeDTO existingEmployee = getEmployeeById(id);
-        if (existingEmployee!=null) {
+    public EmployeeResponseDTO updateEmployee(Long id, EmployeeResponseDTO employeeDTO) {
+        EmployeeResponseDTO existingEmployee = getEmployeeById(id);
+        if (existingEmployee.getName()!=null) {
             employeeList.get(Math.toIntExact(id-1)).setName(employeeDTO.getName());
             employeeList.get(Math.toIntExact(id-1)).setSalary(employeeDTO.getSalary());
             log.info("UPDATED EMPLOYEE");
-            return modelMapper.map(employeeList.get(Math.toIntExact(id-1)),EmployeeDTO.class);
+            return modelMapper.map(employeeList.get(Math.toIntExact(id-1)),EmployeeResponseDTO.class);
         }
         log.warn("EMPLOYEE NOT EXISTING");
-        return null;
+        return new EmployeeResponseDTO();
     }
 
     public boolean deleteEmployee(Long id) {
