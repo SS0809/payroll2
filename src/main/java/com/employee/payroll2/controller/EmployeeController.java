@@ -5,10 +5,13 @@ import com.employee.payroll2.model.EmployeeEntity;
 import com.employee.payroll2.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -48,10 +51,12 @@ public class EmployeeController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeDTO updatedEmployee) {
+    public ResponseEntity<?> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeDTO updatedEmployee) {
         EmployeeDTO employeeDTO = employeeService.updateEmployee(id,updatedEmployee);
         if(employeeDTO!=null) return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
-        else return ResponseEntity.notFound().build();
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error","ID not FOUND");
+        return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
