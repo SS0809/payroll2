@@ -3,6 +3,7 @@ package com.employee.payroll2.controller;
 import com.employee.payroll2.dto.EmployeeDTO;
 import com.employee.payroll2.model.EmployeeEntity;
 import com.employee.payroll2.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class EmployeeController {
         }
     }
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employee) {
+    public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody EmployeeDTO employee) {
         EmployeeDTO employeeDTO = employeeService.addEmployee(employee);
         if(employeeDTO!=null) {
             return ResponseEntity.ok(employeeDTO);
@@ -47,7 +48,7 @@ public class EmployeeController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployee) {
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeDTO updatedEmployee) {
         EmployeeDTO employeeDTO = employeeService.updateEmployee(id,updatedEmployee);
         if(employeeDTO!=null) return ResponseEntity.ok(employeeService.updateEmployee(id,updatedEmployee));
         else return ResponseEntity.notFound().build();
