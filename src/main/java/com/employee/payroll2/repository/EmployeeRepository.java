@@ -6,3 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {}
+//- Create a Repository Interface to hold Employee
+//Payroll Records. Spring automatically implements
+//        this repository interface

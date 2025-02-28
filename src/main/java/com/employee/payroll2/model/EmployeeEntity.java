@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+//@Entity Annotation tells Hibernate to create a
+//table out of the Employee Payroll Class
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
