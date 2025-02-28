@@ -21,10 +21,11 @@ public class EmployeeService {
         if (!employeeList.isEmpty()) {
             log.info("GET ALL EMPLOYEES");
             return employeeList.stream()
-                    .map(employee -> modelMapper.map(employee, EmployeeResponseDTO.class))
+                    .map(employee -> modelMapper.map(
+                            employee, EmployeeResponseDTO.class))
                     .toList();
         } else {
-            log.warn("NO EMPLOYEES FOUND");
+            log.error("NO EMPLOYEES FOUND");
             return new LinkedList<>();
         }
     }
@@ -32,7 +33,8 @@ public class EmployeeService {
 
     public EmployeeResponseDTO getEmployeeById(Long id) {
         log.info("GET EMPLOYEE BY ID");
-        Optional<EmployeeEntity> employeeEntity = employeeList.stream().filter(emp -> emp.getId().equals(id)).findFirst();
+        Optional<EmployeeEntity> employeeEntity = employeeList.stream().filter(
+                emp -> emp.getId().equals(id)).findFirst();
         if (employeeEntity.isPresent()) {
             return modelMapper.map(employeeEntity, EmployeeResponseDTO.class);
         }else {
@@ -47,20 +49,20 @@ public class EmployeeService {
             log.info("ADDED EMPLOYEE");
             return modelMapper.map(newEmployee, EmployeeResponseDTO.class);
         }else {
-            log.warn("EMPLOYEE NOT ADDED");
+            log.error("EMPLOYEE NOT ADDED");
             return new EmployeeResponseDTO();
         }
     }
 
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeResponseDTO employeeDTO) {
         EmployeeResponseDTO existingEmployee = getEmployeeById(id);
-        if (existingEmployee.getName()!=null) {
+        if (existingEmployee.getId()!=null) {
             employeeList.get(Math.toIntExact(id-1)).setName(employeeDTO.getName());
             employeeList.get(Math.toIntExact(id-1)).setSalary(employeeDTO.getSalary());
             log.info("UPDATED EMPLOYEE");
             return modelMapper.map(employeeList.get(Math.toIntExact(id-1)),EmployeeResponseDTO.class);
         }
-        log.warn("EMPLOYEE NOT EXISTING");
+        log.error("EMPLOYEE NOT EXISTING");
         return new EmployeeResponseDTO();
     }
 
