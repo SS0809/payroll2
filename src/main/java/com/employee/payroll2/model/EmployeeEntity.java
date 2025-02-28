@@ -25,5 +25,5 @@ public class EmployeeEntity {
     private LocalDate startdate;
     private String note;
     private String profilePic;
-    private List<String> departments;
+    private String department;
 }

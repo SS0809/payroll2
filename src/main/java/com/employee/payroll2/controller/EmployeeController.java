@@ -79,4 +79,10 @@ public class EmployeeController {
         log.info("Employee not deleted");
         return ResponseEntity.badRequest().body("Employee not found");
     }
+
+
+    @GetMapping("/sales")
+    public List<EmployeeResponseDTO> getSalesEmployees() {
+        return employeeService.getSalesEmployees();
+    }
 }
