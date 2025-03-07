@@ -30,6 +30,6 @@ public class EmployeeResponseDTO {
     private String note;
     @NotBlank(message = "profilepic is empty")
     private String profilePic;
-    @NotBlank(message = "Department name cannot be blank")
-    private String department;
+    @NotEmpty(message = "Department name cannot be blank")
+    private String[] departments;
 }

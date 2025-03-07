@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
-@CrossOrigin(origins = "localhost/*")
+@CrossOrigin(origins = "*")
 @Slf4j
 public class EmployeeController {
 

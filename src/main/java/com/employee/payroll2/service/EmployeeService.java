@@ -59,10 +59,12 @@ public class EmployeeService {
         if (existingEmployeeOpt.isPresent()) {
             EmployeeEntity existingEmployee = existingEmployeeOpt.get();
             modelMapper.typeMap(EmployeeResponseDTO.class, EmployeeEntity.class)
-                    .addMappings(mapper -> mapper.skip(EmployeeEntity::setId)); // Skip ID mapping
-            modelMapper.map(employeeDTO, existingEmployee); // Map changes onto existing entity
+                    .addMappings(mapper -> { mapper.skip(EmployeeEntity::setId);                    });
+            existingEmployee.setDepartments(employeeDTO.getDepartments());
+
+            modelMapper.map(employeeDTO, existingEmployee);
             EmployeeEntity updatedEmployee = employeeRepository.save(existingEmployee);
-            log.info("UPDATED EMPLOYEE");
+            log.info("UPDATED EMPLOYEE: " + updatedEmployee);
             return modelMapper.map(updatedEmployee, EmployeeResponseDTO.class);
         }
         log.error("EMPLOYEE NOT EXISTING");
