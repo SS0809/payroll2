@@ -24,7 +24,7 @@ public class EmployeeResponseDTO {
     private Double salary;
     @NotBlank
     private String gender;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startdate;
     @NotBlank(message = "note is empty")
     private String note;
