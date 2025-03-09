@@ -1,11 +1,14 @@
 FROM openjdk:17
-
+ENV PAYROLL_URL=jdbc:mysql://turntable.proxy.rlwy.net:55140/railway
+ENV PAYROLL_DB_USERNAME=root
+ENV PAYROLL_DB_PASSWORD=YDuaSHQFXmATzrZOtIDZpnPvoCoyPnEz
 
 WORKDIR /app
 
 # Copy Maven wrapper and project files
 COPY . /app
 
+RUN chmod +x mvnw
 # Build the JAR inside the container
 RUN ./mvnw clean package -DskipTests
 
